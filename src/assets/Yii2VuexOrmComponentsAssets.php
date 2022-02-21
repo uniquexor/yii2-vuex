@@ -6,7 +6,9 @@
 
     class Yii2VuexOrmComponentsAssets extends AssetBundle {
 
-        public $js = [];
+        public $js = [
+            'components/model.js'
+        ];
 
         public $jsOptions = [
             'position' => View::POS_HEAD

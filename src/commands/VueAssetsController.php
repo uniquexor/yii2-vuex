@@ -8,6 +8,8 @@
 
     class VueAssetsController extends \unique\yii2vue\commands\VueAssetsController {
 
+        public string $base_api_module_path = '/api/';
+
         /**
          * @var string Path to Model's class's template file.
          */
@@ -27,6 +29,13 @@
         protected function beforeWrite( string $template, string $object_class, \ReflectionClass $reflection ): string {
 
             $template = str_replace( '__TABLE_NAME__', $object_class::tableName(), $template );
+
+            $class = explode( '\\', $object_class );
+            $class = end( $class );
+            $class = $this->base_api_module_path . Inflector::camel2id( $class ) . 's';
+            $template = str_replace( '__ENDPOINT_CREATE__', $class . '/create', $template );
+            $template = str_replace( '__ENDPOINT_UPDATE__', $class . '/update', $template );
+            $template = str_replace( '__ENDPOINT_DELETE__', $class . '/delete', $template );
 
             return parent::beforeWrite( $template, $object_class, $reflection );
         }

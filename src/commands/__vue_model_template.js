@@ -1,7 +1,7 @@
 /**
  * __JSDOC_BLOCK__
  */
-class __CLASS__ extends VuexORM.Model {
+class __CLASS__ extends Model {
 
     static endpoint_create = '__ENDPOINT_CREATE__';
     static endpoint_update = '__ENDPOINT_UPDATE__';

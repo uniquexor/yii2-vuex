@@ -6,8 +6,10 @@
 
     class Yii2VuexOrmComponentsAssets extends AssetBundle {
 
+        public $sourcePath = __DIR__ . '/vue';
+
         public $js = [
-            'components/model.js'
+            'js/components/model.js'
         ];
 
         public $jsOptions = [

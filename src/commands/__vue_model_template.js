@@ -9,7 +9,7 @@ class __CLASS__ extends Model {
 
     static entity = '__TABLE_NAME__';
 
-    fields() {
+    static fields() {
 
         return {
             __TO_BODY__

@@ -4,8 +4,8 @@ class Model extends VuexORM.Model {
     static endpoint_update;
     static endpoint_delete;
 
-    errors;
-    default_error_field = 'id';
+    _errors;
+    _default_error_field = 'id';
 
     isNewRecord() {
 
@@ -15,7 +15,7 @@ class Model extends VuexORM.Model {
     async save() {
 
         let errors = {};
-        this.errors = {};
+        this._errors = {};
 
         let result = null;
 
@@ -47,11 +47,11 @@ class Model extends VuexORM.Model {
                 errors[ error.field ] = error.message;
             }
 
-            this.errors = errors;
-        } else if ( result.response.status !== 200 && result.response.status !== 201 && this.default_error_field ) {
+            this._errors = errors;
+        } else if ( result.response.status !== 200 && result.response.status !== 201 && this._default_error_field ) {
 
-            errors[ this.default_error_field ] = result.response.statusText;
-            this.errors = errors;
+            errors[ this._default_error_field ] = result.response.statusText;
+            this._errors = errors;
         }
 
         return result;

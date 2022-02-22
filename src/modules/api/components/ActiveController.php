@@ -2,8 +2,8 @@
     namespace unique\yii2vuexorm\modules\api\components;
 
     use unique\yii2vue\modules\api\actions\CreateAction;
+    use unique\yii2vue\modules\api\actions\IndexAction;
     use unique\yii2vue\modules\api\actions\ViewAction;
-    use unique\yii2vuexorm\modules\api\actions\IndexAction;
     use unique\yii2vuexorm\modules\api\actions\UpdateAction;
     use yii\data\ActiveDataFilter;
     use yii\rest\DeleteAction;

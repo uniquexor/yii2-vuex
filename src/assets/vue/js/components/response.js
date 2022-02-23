@@ -13,7 +13,7 @@ class Response {
 
         if ( response.response.status === 200 ) {
 
-            this.last_page = response.response.headers[ 'x-pagination-current-page' ];
+            this.page = response.response.headers[ 'x-pagination-current-page' ];
             this.total_items = response.response.headers[ 'x-pagination-total-count' ];
 
             let ids = [];

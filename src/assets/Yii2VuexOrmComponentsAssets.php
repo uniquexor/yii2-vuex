@@ -9,7 +9,8 @@
         public $sourcePath = __DIR__ . '/vue';
 
         public $js = [
-            'js/components/model.js'
+            'js/components/model.js',
+            'js/components/response.js',
         ];
 
         public $jsOptions = [

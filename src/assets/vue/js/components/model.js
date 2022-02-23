@@ -3,6 +3,7 @@ class Model extends VuexORM.Model {
     static endpoint_create;
     static endpoint_update;
     static endpoint_delete;
+    static endpoint_list;
 
     _errors;
     _default_error_field = 'id';
@@ -68,5 +69,40 @@ class Model extends VuexORM.Model {
         return await this.constructor.api().delete( this.constructor.endpoint_delete + '?id=' + this.id, {
             delete: this.id
         } );
+    }
+
+    static async list( request ) {
+
+        const default_params = {
+            url: this.endpoint_list,
+            expand: '',
+            params: {},
+            page: null,
+            page_size: 5,
+            axios: {}
+        }
+
+        request = $.extend( default_params, request );
+        let expand = request.expand;
+        if ( Array.isArray( request.expand ) ) {
+
+            expand = request.expand.join( ',' );
+        }
+
+        let get_params = $.extend( request.params, { expand: expand } );
+        if ( request.page ) {
+
+            get_params.page = request.page;
+        }
+
+        if ( request.page_size ) {
+
+            get_params.page_size = request.page_size;
+        }
+
+        const axios_params = $.extend( request.axios, { params: get_params } );
+        const result = await this.api().get( request.url, axios_params );
+
+        return new Response( request, result );
     }
 }

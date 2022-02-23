@@ -76,6 +76,7 @@ class Model extends VuexORM.Model {
         const default_params = {
             url: this.endpoint_list,
             expand: '',
+            filter: null,
             params: {},
             page: null,
             page_size: 5,
@@ -98,6 +99,24 @@ class Model extends VuexORM.Model {
         if ( request.page_size ) {
 
             get_params['per-page'] = request.page_size;
+        }
+
+        if ( request.filter ) {
+
+            if ( !request.axios ) {
+
+                request.axios = {};
+            }
+
+            if ( !request.axios.paramsSerializer ) {
+
+                request.axios.paramsSerializer = function ( params ) {
+
+                    return $.param( params );
+                }
+            }
+
+            get_params.filter = request.filter;
         }
 
         const axios_params = $.extend( request.axios, { params: get_params } );

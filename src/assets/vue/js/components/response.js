@@ -17,7 +17,7 @@ class Response {
             this.page = parseInt( response.response.headers[ 'x-pagination-current-page' ], 10 );
             this.total_items = parseInt( response.response.headers[ 'x-pagination-total-count' ], 10 );
 
-            if ( !response.entities ) {
+            if ( !response.response.data || ( Array.isArray( response.response.data ) && response.response.data.length === 0 ) ) {
 
                 return;
             }

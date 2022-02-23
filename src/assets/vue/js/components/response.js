@@ -2,7 +2,7 @@ class Response {
 
     request;
     response;
-    entities;
+    entities = [];
     page;
     total_items;
 
@@ -15,6 +15,11 @@ class Response {
 
             this.page = response.response.headers[ 'x-pagination-current-page' ];
             this.total_items = response.response.headers[ 'x-pagination-total-count' ];
+
+            if ( !response.entities ) {
+                
+                return;
+            }
 
             let ids = [];
             response.entities[ response.model.entity ].forEach( entity => ids.push( entity.id ) );

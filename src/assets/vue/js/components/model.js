@@ -97,7 +97,7 @@ class Model extends VuexORM.Model {
 
         if ( request.page_size ) {
 
-            get_params.page_size = request.page_size;
+            get_params.pageSize = request.page_size;
         }
 
         const axios_params = $.extend( request.axios, { params: get_params } );

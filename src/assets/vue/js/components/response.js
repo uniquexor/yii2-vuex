@@ -3,6 +3,7 @@ class Response {
     request;
     response;
     entities = [];
+    query;
     page;
     total_items;
 
@@ -13,11 +14,11 @@ class Response {
 
         if ( response.response.status === 200 ) {
 
-            this.page = response.response.headers[ 'x-pagination-current-page' ];
-            this.total_items = response.response.headers[ 'x-pagination-total-count' ];
+            this.page = parseInt( response.response.headers[ 'x-pagination-current-page' ], 10 );
+            this.total_items = parseInt( response.response.headers[ 'x-pagination-total-count' ], 10 );
 
             if ( !response.entities ) {
-                
+
                 return;
             }
 
@@ -30,7 +31,26 @@ class Response {
                 expand = expand.split( ',' );
             }
 
-            this.entities = response.model.query().with( expand ).whereIdIn( ids ).all();
+            this.query = response.model.query().with( expand ).whereIdIn( ids );
+
+            let sorts = request.sort ? request.sort.split( ',' ) : [];
+            if ( sorts.length ) {
+
+                for ( let i in sorts ) {
+
+                    let order = 'asc';
+                    let sort = sorts[i];
+                    if ( sort[ 0 ] === '-' ) {
+
+                        order = 'desc';
+                        sort = sort.substring( 1 );
+                    }
+
+                    this.query.orderBy( sort, order );
+                }
+            }
+
+            this.entities = this.query.all();
         }
     }
 }

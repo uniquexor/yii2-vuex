@@ -1,9 +1,11 @@
-class Model extends VuexORM.Model {
+window.Yii2VuexOrm = window.Yii2VuexOrm || {};
+Yii2VuexOrm.Model = class extends VuexORM.Model {
 
     static endpoint_create;
     static endpoint_update;
     static endpoint_delete;
     static endpoint_list;
+    static endpoint_view;
 
     _errors;
     _default_error_field = 'id';
@@ -72,34 +74,16 @@ class Model extends VuexORM.Model {
     }
 
     /**
-     * `request` can have the following options:
-     * - {string} `url`: The url for the listing
-     * - {string}|{array} `expand`: The relations to expand. If an array is passed, will be merged to a string, using commas.
-     *                              The same as passing "expand" parameter to action/index.
-     * - {object} `filter`: A filter for yii2. The same as passing a "filter" parameter to action/index. However, a new Axios ParamsSerializer will
-     *                      be created to serialize the object to a query form of "filter[field]=...&filter[field_2]=..."
-     * - {string} `sort`: A field to sort data by. By default sorts in ascending order. To sort in descending prepend field name with "-".
-     * - {int|null} `page`: Page number
-     * - {int|null} `page_size`: How many record to return in a single page.
-     * - {object} `params`: Other query parameters to add to the request.
-     * - {object} `axios`: Other Axios configuration values.
-     * @param {object} request
-     * @returns {Promise<Response | Response>}
+     * Expands default request options with the given request, also preparing axios_params options for a request.
+     * @param {*} default_request
+     * @param {*} request
+     * @returns {{request: *, axios_params}}
+     * @private
      */
-    static async list( request ) {
+    static _getOptions( default_request, request = {} ) {
 
-        const default_params = {
-            url: this.endpoint_list,
-            expand: '',
-            filter: null,
-            sort: null,
-            page: null,
-            page_size: 5,
-            params: {},
-            axios: {}
-        }
+        request = $.extend( default_request, request );
 
-        request = $.extend( default_params, request );
         let expand = request.expand;
         if ( Array.isArray( request.expand ) ) {
 
@@ -141,8 +125,74 @@ class Model extends VuexORM.Model {
         }
 
         const axios_params = $.extend( request.axios, { params: get_params } );
-        const result = await this.api().get( request.url, axios_params );
 
-        return new Response( request, result );
+        return {
+            request: request,
+            axios_params: axios_params
+        }
+    }
+
+    /**
+     * `request` can have the following options:
+     * - {string} `url`: The url for the listing
+     * - {string}|{array} `expand`: The relations to expand. If an array is passed, will be merged to a string, using commas.
+     *                              The same as passing "expand" parameter to action/index.
+     * - {object} `filter`: A filter for yii2. The same as passing a "filter" parameter to action/index. However, a new Axios ParamsSerializer will
+     *                      be created to serialize the object to a query form of "filter[field]=...&filter[field_2]=..."
+     * - {string} `sort`: A field to sort data by. By default sorts in ascending order. To sort in descending prepend field name with "-".
+     * - {int|null} `page`: Page number
+     * - {int|null} `page_size`: How many record to return in a single page.
+     * - {object} `params`: Other query parameters to add to the request.
+     * - {object} `axios`: Other Axios configuration values.
+     * @param {object} request
+     * @returns {Promise<Yii2VuexOrm.Response>}
+     */
+    static async list( request ) {
+
+        request = Yii2VuexOrm.Model._getOptions( {
+            url: this.endpoint_list,
+            expand: '',
+            filter: null,
+            sort: null,
+            page: null,
+            page_size: 5,
+            params: {},
+            axios: {}
+        }, request );
+
+        const result = await this.api().get( request.request.url, request.axios_params );
+
+        return new Yii2VuexOrm.Response( request.request, result );
+    }
+
+    /**
+     * `request` can have the following options:
+     * - {string} `url`: The url for the listing
+     * - {string}|{array} `expand`: The relations to expand. If an array is passed, will be merged to a string, using commas.
+     *                              The same as passing "expand" parameter to action/index.
+     * - {object} `filter`: A filter for yii2. The same as passing a "filter" parameter to action/index. However, a new Axios ParamsSerializer will
+     *                      be created to serialize the object to a query form of "filter[field]=...&filter[field_2]=..."
+     * - {string} `sort`: A field to sort data by. By default sorts in ascending order. To sort in descending prepend field name with "-".
+     * - {int|null} `page`: Page number
+     * - {int|null} `page_size`: How many record to return in a single page.
+     * - {object} `params`: Other query parameters to add to the request.
+     * - {object} `axios`: Other Axios configuration values.
+     * @param {int} id
+     * @param {object} request
+     * @returns {Promise<Yii2VuexOrm.Response>}
+     */
+    static async view( id, request = {} ) {
+
+        request = Yii2VuexOrm.Model._getOptions( {
+            url: this.endpoint_view,
+            expand: '',
+            filter: null,
+            params: {},
+            axios: {}
+        }, request );
+
+        const result = await this.api().get( request.request.url, request.axios_params );
+
+        return new Yii2VuexOrm.Response( request.request, result );
     }
 }

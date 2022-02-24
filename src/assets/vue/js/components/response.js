@@ -1,4 +1,5 @@
-class Response {
+window.Yii2VuexOrm = window.Yii2VuexOrm || {};
+Yii2VuexOrm.Response = class {
 
     request;
     response;

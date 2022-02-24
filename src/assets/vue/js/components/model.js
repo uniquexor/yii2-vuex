@@ -187,7 +187,9 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             url: this.endpoint_view,
             expand: '',
             filter: null,
-            params: {},
+            params: {
+                id: id
+            },
             axios: {}
         }, request );
 

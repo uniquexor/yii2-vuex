@@ -24,7 +24,19 @@ Yii2VuexOrm.Response = class {
             }
 
             let ids = [];
-            response.entities[ response.model.entity ].forEach( entity => ids.push( entity.id ) );
+            const primary_keys = response.model.primaryKey;
+            response.entities[ response.model.entity ].forEach( function ( entity ) {
+
+                if ( Array.isArray( primary_keys ) ) {
+
+                    let pkeys = [];
+                    primary_keys.forEach( key => pkeys.push( entity[ key ] ) );
+                    ids.push( pkeys );
+                } else {
+
+                    ids.push( entity[ primary_keys ] )
+                }
+            } );
 
             let expand = request.expand;
             if ( !Array.isArray( expand ) ) {

@@ -15,31 +15,39 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
         return this.id === null;
     }
 
-    async save() {
+    async save( request = {} ) {
 
         let errors = {};
         this._errors = {};
 
         let result = null;
 
+        request = Yii2VuexOrm.Model._getOptions( {
+            url: this.isNewRecord() ? this.constructor.endpoint_create : this.constructor.endpoint_update,
+            expand: '',
+            expand_name: '_expand',
+            params: {},
+            axios: {}
+        }, request );
+
         if ( this.isNewRecord() ) {
 
-            if ( !this.constructor.endpoint_create ) {
+            if ( !request.request.url ) {
 
                 console.error( 'No endpoint set for a model', this );
                 throw 'No endpoint set for a model';
             }
 
-            result = await this.constructor.api().post( this.constructor.endpoint_create, this );
+            result = await this.constructor.api().post( request.request.url, this, request.axios_params );
         } else {
 
-            if ( !this.constructor.endpoint_update ) {
+            if ( !request.request.url ) {
 
                 console.error( 'No endpoint set for a model', this );
                 throw 'No endpoint set for a model';
             }
 
-            result = await this.constructor.api().put( this.constructor.endpoint_update, this );
+            result = await this.constructor.api().put( request.request.url, this, request.axios_params );
         }
 
         if ( result.response.status === 422 ) {
@@ -57,7 +65,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             this._errors = errors;
         }
 
-        return result;
+        return new Yii2VuexOrm.Response( request.request, result );
     }
 
     async delete() {
@@ -90,7 +98,10 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             expand = request.expand.join( ',' );
         }
 
-        let get_params = $.extend( request.params, { expand: expand } );
+        let expand_obj = {};
+        expand_obj[ request.expand_name ] = expand;
+
+        let get_params = $.extend( request.params, expand_obj );
         if ( request.page ) {
 
             get_params.page = request.page;
@@ -152,6 +163,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
         request = Yii2VuexOrm.Model._getOptions( {
             url: this.endpoint_list,
             expand: '',
+            expand_name: 'expand',
             filter: null,
             sort: null,
             page: null,
@@ -186,6 +198,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
         request = Yii2VuexOrm.Model._getOptions( {
             url: this.endpoint_view,
             expand: '',
+            expand_name: 'expand',
             filter: null,
             params: {
                 id: id
@@ -196,6 +209,15 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
         const result = await this.api().get( request.request.url, request.axios_params );
 
         return new Yii2VuexOrm.Response( request.request, result );
+    }
+
+    /**
+     * Returns true if model has errors.
+     * @returns {boolean}
+     */
+    hasErrors() {
+
+        return Object.keys( this._errors ).length > 0;
     }
 
     /**
@@ -214,6 +236,16 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
      */
     getErrorSummary( separator = '; ' ) {
 
-        return this._errors.join( '; ' );
+        const errors = [];
+
+        for ( let i in this._errors ) {
+
+            if ( this._errors.hasOwnProperty( i ) ) {
+
+                errors.push( this._errors[ i ] );
+            }
+        }
+
+        return errors.join( '; ' );
     }
 }

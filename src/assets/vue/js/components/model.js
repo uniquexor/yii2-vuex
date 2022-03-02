@@ -197,4 +197,23 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
 
         return new Yii2VuexOrm.Response( request.request, result );
     }
+
+    /**
+     * Returns all errors indexed by their field.
+     * @returns {Array}
+     */
+    getErrors() {
+
+        return this._errors;
+    }
+
+    /**
+     * Returns a summary of all joined errors, using the provided separator.
+     * @param {String} separator
+     * @returns {String}
+     */
+    getErrorSummary( separator = '; ' ) {
+
+        return this._errors.join( '; ' );
+    }
 }

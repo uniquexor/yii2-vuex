@@ -98,10 +98,15 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             expand = request.expand.join( ',' );
         }
 
-        let expand_obj = {};
-        expand_obj[ request.expand_name ] = expand;
+        let get_params = request.params;
 
-        let get_params = $.extend( request.params, expand_obj );
+        if ( expand ) {
+
+            let expand_obj = {};
+            expand_obj[ request.expand_name ] = expand;
+            get_params = $.extend( get_params, expand_obj );
+        }
+
         if ( request.page ) {
 
             get_params.page = request.page;

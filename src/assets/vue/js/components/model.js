@@ -65,7 +65,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             this._errors = errors;
         }
 
-        return new Yii2VuexOrm.Response( request.request, result );
+        return result;
     }
 
     async delete() {

@@ -15,8 +15,15 @@ Yii2VuexOrm.Response = class {
 
         if ( response.response.status === 200 ) {
 
-            this.page = parseInt( response.response.headers[ 'x-pagination-current-page' ], 10 );
-            this.total_items = parseInt( response.response.headers[ 'x-pagination-total-count' ], 10 );
+            if ( response.response.headers[ 'x-pagination-current-page' ] ) {
+
+                this.page = parseInt( response.response.headers[ 'x-pagination-current-page' ], 10 );
+            }
+
+            if ( response.response.headers[ 'x-pagination-total-count' ] ) {
+
+                this.total_items = parseInt( response.response.headers[ 'x-pagination-total-count' ], 10 );
+            }
 
             if ( !response.response.data || ( Array.isArray( response.response.data ) && response.response.data.length === 0 ) ) {
 

@@ -7,7 +7,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
     static endpoint_list;
     static endpoint_view;
 
-    _errors;
+    _errors = {};
     _default_error_field = 'id';
 
     isNewRecord() {

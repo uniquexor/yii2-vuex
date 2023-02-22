@@ -30,7 +30,9 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             axios: {}
         }, request );
 
+        let error = null;
         try {
+
             if ( this.isNewRecord() ) {
 
                 if ( !request.request.url ) {
@@ -52,6 +54,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             }
         } catch ( e ) {
 
+            error = e;
             result = e;
         }
 
@@ -68,6 +71,11 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
 
             errors[ this._default_error_field ] = result.response.statusText;
             this._errors = errors;
+        }
+
+        if ( error ) {
+
+            throw error;
         }
 
         return result;

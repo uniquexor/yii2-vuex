@@ -30,24 +30,29 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             axios: {}
         }, request );
 
-        if ( this.isNewRecord() ) {
+        try {
+            if ( this.isNewRecord() ) {
 
-            if ( !request.request.url ) {
+                if ( !request.request.url ) {
 
-                console.error( 'No endpoint set for a model', this );
-                throw 'No endpoint set for a model';
+                    console.error( 'No endpoint set for a model', this );
+                    throw 'No endpoint set for a model';
+                }
+
+                result = await this.constructor.api().post( request.request.url, this, request.axios_params );
+            } else {
+
+                if ( !request.request.url ) {
+
+                    console.error( 'No endpoint set for a model', this );
+                    throw 'No endpoint set for a model';
+                }
+
+                result = await this.constructor.api().put( request.request.url, this, request.axios_params );
             }
+        } catch ( e ) {
 
-            result = await this.constructor.api().post( request.request.url, this, request.axios_params );
-        } else {
-
-            if ( !request.request.url ) {
-
-                console.error( 'No endpoint set for a model', this );
-                throw 'No endpoint set for a model';
-            }
-
-            result = await this.constructor.api().put( request.request.url, this, request.axios_params );
+            result = e;
         }
 
         if ( result.response.status === 422 ) {

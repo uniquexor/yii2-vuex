@@ -248,6 +248,14 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
     }
 
     /**
+     * Clears all errors.
+     */
+    clearErrors() {
+
+        this._errors = {};
+    }
+
+    /**
      * Returns a summary of all joined errors, using the provided separator.
      * @param {String} separator
      * @returns {String}

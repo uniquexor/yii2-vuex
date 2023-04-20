@@ -15,6 +15,12 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
         return this.id === null;
     }
 
+    constructor( record ) {
+
+        super( record );
+        this.updateOldValues( record ? record : {} );
+    }
+
     async save( request = {} ) {
 
         let errors = {};
@@ -273,5 +279,80 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
         }
 
         return errors.join( '; ' );
+    }
+
+    /**
+     * Stores given values as old values.
+     * @param {Array|Object} attrs
+     */
+    updateOldValues( attrs ) {
+
+        let old_values = {};
+        for ( let i in TripThingForm.fields() ) {
+
+            old_values[ i ] = attrs[ i ];
+        }
+
+        this.$old_values = old_values;
+    }
+
+    /**
+     * Checks if a given attribute has changed since it was last stored in this object.
+     * @param {String} attr
+     * @returns {boolean}
+     */
+    isDirty( attr ) {
+
+        return this.$old_values[ attr ] !== this[ attr ];
+    }
+
+    static afterUpdate( model ) {
+
+        model.updateOldValues( model );
+    }
+
+    static afterCreate( model ) {
+
+        model.updateOldValues( model );
+    }
+
+    /**
+     * Returns all attributes of the model as plain Object.
+     * @returns {{}}
+     */
+    getAttributes() {
+
+        const fields = this.constructor.fields();
+
+        let data = {};
+        for ( let i in fields ) {
+
+            data[ i ] = this[ i ];
+        }
+
+        return data;
+    }
+
+    /**
+     * Sets attributes from a given data object/array
+     * @param {Object|Array} data
+     * @param {boolean} is_dirty - If true, treats the changed values as dirty, otherwise as not.
+     */
+    setAttributes( data, is_dirty = true ) {
+
+        const fields = this.constructor.fields();
+
+        for ( let i in data ) {
+
+            if ( typeof( fields[ i ] ) !== 'undefined' ) {
+
+                this[ i ] = data[ i ];
+
+                if ( !is_dirty ) {
+
+                    this.$old_values[ i ] = data[i];
+                }
+            }
+        }
     }
 }

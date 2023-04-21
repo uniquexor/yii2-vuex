@@ -288,7 +288,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
     updateOldValues( attrs ) {
 
         let old_values = {};
-        for ( let i in TripThingForm.fields() ) {
+        for ( let i in this.constructor.fields() ) {
 
             old_values[ i ] = attrs[ i ];
         }

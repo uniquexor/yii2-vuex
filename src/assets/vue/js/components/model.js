@@ -254,11 +254,38 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
     }
 
     /**
-     * Clears all errors.
+     * Returns the error message for the specified field.
+     * @param {String} field
+     * @returns {String|undefined}
      */
-    clearErrors() {
+    getError( field ) {
 
-        this._errors = {};
+        return this._errors[ field ];
+    }
+
+    /**
+     * Adds an error to the specified field.
+     * @param {String} field
+     * @param {String} message
+     */
+    addError( field, message ) {
+
+        Vue.set( this._errors, field, message );
+    }
+
+    /**
+     * If a field is specified, clears errors on it, otherwise clears all errors.
+     * @param {String} field
+     */
+    clearErrors( field = undefined) {
+
+        if ( field ) {
+
+            Vue.delete( this._errors, field );
+        } else {
+
+            this._errors = {};
+        }
     }
 
     /**

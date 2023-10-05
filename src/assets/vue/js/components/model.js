@@ -7,6 +7,8 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
     static endpoint_list;
     static endpoint_view;
 
+    static primaryKey = 'id';
+
     _errors = {};
     _default_error_field = 'id';
 
@@ -28,7 +30,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
 
         let result = null;
 
-        request = Yii2VuexOrm.Model._getOptions( {
+        request = this.constructor._getOptions( {
             url: this.isNewRecord() ? this.constructor.endpoint_create : this.constructor.endpoint_update,
             expand: '',
             expand_name: '_expand',
@@ -87,7 +89,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
         return result;
     }
 
-    async delete() {
+    async delete( request = {} ) {
 
         if ( !this.constructor.endpoint_delete ) {
 
@@ -95,9 +97,26 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             throw 'No endpoint set for a model';
         }
 
-        return await this.constructor.api().delete( this.constructor.endpoint_delete + '?id=' + this.id, {
-            delete: this.id
-        } );
+        const id = this[ this.primaryKey ];
+        if ( !id ) {
+
+            console.error( 'No primary key set for a model', this );
+            throw 'No primary key set for a model';
+        }
+
+        request = this.constructor._getOptions( {
+            url: this.constructor.endpoint_delete,
+            expand: '',
+            expand_name: '_expand',
+            params: {
+                id: id,
+            },
+            axios: {
+                delete: id
+            }
+        }, request );
+
+        return await this.constructor.api().delete( request.request.url, request.axios_params );
     }
 
     /**
@@ -184,7 +203,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
      */
     static async list( request ) {
 
-        request = Yii2VuexOrm.Model._getOptions( {
+        request = this._getOptions( {
             url: this.endpoint_list,
             expand: '',
             expand_name: 'expand',
@@ -219,7 +238,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
      */
     static async view( id, request = {} ) {
 
-        request = Yii2VuexOrm.Model._getOptions( {
+        request = this._getOptions( {
             url: this.endpoint_view,
             expand: '',
             expand_name: 'expand',

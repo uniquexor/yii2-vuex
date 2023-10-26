@@ -97,7 +97,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             throw 'No endpoint set for a model';
         }
 
-        const id = this[ this.primaryKey ];
+        const id = this[ this.constructor.primaryKey ];
         if ( !id ) {
 
             console.error( 'No primary key set for a model', this );

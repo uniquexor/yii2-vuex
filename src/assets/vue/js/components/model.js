@@ -150,7 +150,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             get_params.page = request.page;
         }
 
-        if ( request.page_size ) {
+        if ( request.page_size !== null ) {
 
             get_params['per-page'] = request.page_size;
         }

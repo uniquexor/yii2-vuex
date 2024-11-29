@@ -66,7 +66,7 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             result = e;
         }
 
-        if ( result.response.status === 422 ) {
+        if ( result.response?.status === 422 ) {
 
             for ( let i in result.response.data ) {
 
@@ -75,9 +75,13 @@ Yii2VuexOrm.Model = class extends VuexORM.Model {
             }
 
             this._errors = errors;
-        } else if ( result.response.status !== 200 && result.response.status !== 201 && this._default_error_field ) {
+        } else if ( result.response?.status !== 200 && result.response?.status !== 201 && this._default_error_field ) {
 
             errors[ this._default_error_field ] = result.response.statusText;
+            this._errors = errors;
+        } else if ( this._default_error_field ) {
+
+            errors[ this._default_error_field ] = result;
             this._errors = errors;
         }
 
